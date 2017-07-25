@@ -1,0 +1,10 @@
+//Function Onopen trigger's: From spreadsheet on Open
+//Next funcion: From spreadsheet on Open
+
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  // Or DocumentApp or FormApp.
+  ui.createMenu('Custom Menu')
+      .addItem('Function1Name','Function2Name')
+      .addToUi();
+}
