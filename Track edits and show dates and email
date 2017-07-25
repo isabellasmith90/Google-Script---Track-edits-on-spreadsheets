@@ -1,0 +1,15 @@
+function onEdit(event)
+{
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var actSht = event.source.getActiveSheet();
+    var actRng = event.source.getActiveRange();
+
+    var index = actRng.getRowIndex();
+    var dateCol = actSht.getLastColumn();
+    var lastCell = actSht.getRange(index,dateCol);
+    var date = Utilities.formatDate(new Date(), "GMT-3", "dd/MM/yyyy HH:mm");
+
+    lastCell.setValue(date + " - " + Session.getActiveUser());
+  //  lastCell.setComment("Ultima Modificacion: " + actRng.getA1Notation() +' por '+Session.getActiveUser());
+  //  ss.toast('Ultima Modificacion = '+ actRng.getA1Notation()+' por '+Session.getActiveUser());
+}
