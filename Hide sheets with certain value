@@ -1,0 +1,30 @@
+
+function hideColumn() {
+  // get active spreadsheet
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // get first sheet
+  var sheet = ss.getSheetByName("Data");
+
+  // get data
+  var data = sheet.getDataRange();
+
+  // get number of columns
+  var lastRow = data.getLastRow()+1;
+
+  Logger.log(lastRow);
+
+  // itterate through columns
+  for(var i=1; i<lastRow; i++) {
+     if(data.getCell(i, 11).getValue() == 'Yes') {
+        sheet.hideRows(i);
+     }
+  }
+}
+
+//Row 19 (i,11) 11 means the column number where value is Yes.
+//Recommend to add: in a nother sheet on first cell (A1)    =QUERY( Data!A3:K , "select * where K = 'Yes'" )
+//A3:K  range
+//K column is where value is Yes
+
+
