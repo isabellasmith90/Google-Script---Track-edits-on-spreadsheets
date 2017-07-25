@@ -1,0 +1,29 @@
+
+//Sends email
+
+function system(e) {
+
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+  var lastRowData = sheet.getLastRow();
+      
+     var Date = e.values[0];
+     var Requestor = e.values[1];
+     var RBO = e.values[2];
+     var Region = e.values[3];
+     var Issue = e.values[4];
+     var Description = e.values[5];
+ 
+ //the following adds a value in a cell
+    sheet.getRange(lastRowData,7).setValue("=CONCATENATE(D"+lastRowData+",E"+lastRowData+")");
+    var Manuale= sheet.getRange(lastRowData,7).getValue();
+  
+    sheet.getRange(lastRowData,8).setValue("=VLOOKUP(G"+lastRowData+",Contacts!$A$1:$B$30,2,0)");
+    var Manual= sheet.getRange(lastRowData,8).getValue();
+  
+  var Message = "<div style='background-color:purple; color:white;text-align:center;width:800px;padding:3px'><h1>Title</h1></div><div style='line-height:30px;background-color:#eeeeee;width:800px;float:left;padding:3px'>"+Requestor + " has raised the following issue: <b> <br>"+"<b> Type of issue: </b>"+Issue+"<br>" + "<b>Date of Issue Submission: </b>"+ Date +"<br>"+"<b>RBO:</b> "+RBO+"<br><b>Region:</b> "+Region+"<br>"+"<b>Description:</b> "+Description
+    var Subject = "Title"
+    
+ MailApp.sendEmail({to:Manual,subject: Subject,htmlBody: Message,name:"Title"})
+     
+ }  
