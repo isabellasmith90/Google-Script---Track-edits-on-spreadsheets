@@ -1,0 +1,19 @@
+function myFunction() {
+ 
+  var spread = SpreadsheetApp.openById("1hFhyNTzIEqLGWkfgwE5QWNgFMHBAqUBP4xuFvTdSp2I");
+  var sheetChart = spread.getSheetByName("Sheet1")
+  
+  var chart = sheetChart.newChart()
+  .setChartType(Charts.ChartType.BAR)
+  .addRange(sheetChart.getRange("A1:B12"))
+  .setPosition(5, 5, 0, 0)
+  .build();
+  
+  
+  sheetChart.insertChart(chart);
+}  
+
+function onOpen(){
+  myFunction();
+  
+}
