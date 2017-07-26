@@ -1,0 +1,146 @@
+//This function sends notification emails to customer service when a complaint or resolution is entered.
+function formSubmitReplies(e) {
+  
+  
+  //Form response value definitions
+
+  var activeSheet=SpreadsheetApp.getActiveSheet().getName();
+  if (activeSheet=="Data"){
+    var request="yes"
+    var submitDate = e.values[0]
+    var SiteName = e.values[1]
+    var Contactpoint = e.values[2]
+    var Job = e.values[3]
+    var item = e.values[4]
+    var Customer = e.values[5]
+    var Recommendedchange = e.values[6]
+    var Reasonofthechange = e.values[7]
+    var Stageone = e.values[8]
+   
+    var sheetData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+    var lastRowData = sheetData.getLastRow()
+    var userName = sheetData.getRange(lastRowData,6).getValue()
+  }
+  
+
+
+  if (activeSheet=="Responses") {
+    var request="no"
+    
+    var ID = e.values[0]
+    var submitDate = e.values[1]
+    var Approve = e.values[2]
+    var Sitecontact = e.values[3]
+    var emailcontact = e.values[4]
+    var NotesComments = e.values[5]
+    var Support = e.values[6]
+    
+  }
+  
+// Fill the last columns of the Request tab
+  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+  var IDGen = sheet.getLastRow()+1;
+  var sheetComp = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Responses");
+  var lastRow = sheetComp.getLastRow()
+
+  if (request == "no") {
+ sheetComp.getRange(lastRow,8).setValue("=lookup("+ID+",Data!C2:C,Data!F2:F)");
+ var originalUserChange = sheetComp.getRange(lastRow,8).getValue();
+                        
+ sheetComp.getRange(lastRow,9).setValue("=lookup("+ID+",Data!C2:C,Data!J2:J)")
+ var originalProblemProposal = sheetComp.getRange(lastRow,9).getValue();
+                        
+ sheetComp.getRange(lastRow,10).setValue("=lookup("+ID+",Data!C2:C,Data!K2:K)")
+ var Requestor = sheetComp.getRange(lastRow,10).getValue();
+  
+ sheetComp.getRange(lastRow,11).setValue("=lookup("+ID+",Data!C2:C,Data!G2:G)")
+ var Glid = sheetComp.getRange(lastRow,11).getValue();
+  
+ sheetComp.getRange(lastRow,12).setValue("=lookup("+ID+",Data!C2:C,Data!L2:L)")
+ var Stage = sheetComp.getRange(lastRow,12).getValue();}
+
+
+ //Defines messages and subjects depending on whether it is request or a feedback
+  
+ var Messageone = "<div style='background-color:red; color:white;text-align:center;width:800px;padding:3px'><h1>Site Product/Process Spec Change Request</h1></div><div style='line-height:30px;background-color:#eeeeee;width:800px;float:left;padding:3px'>"+Contactpoint + " has submitted a spec change request <b>(ID# " + IDGen + ")</b>   for the following reason: <br>" + "<b>Date of Complaint Submission: </b>"+submitDate +"<br><b>Site:</b> "+ SiteName + "<br><b>Stage:</b> "+ Stageone+ "<br><b>Customer:</b> "+ Customer+ "<br><b> Glid#: </b>" + Job + "<br><b> Item #: </b>"+ item +"<br><b> Recommended Change: </b>" + Recommendedchange + "<br><b> Reason of Change: </b>" + Reasonofthechange +"</div><div style='background-color:#A9A9A9; color:white;text-align:center;width:800px;padding:0px'><h2>Please click <a href='https://docs.google.com/a/averydennison.com/forms/d/e/1FAIpQLSdpLQpog_HvcIxRTzAkCZbEV_B1uup4bxqG0bntQAaj6Mmiiw/viewform'> here</a> to approve or deny the request.</div>"
+ var Subjectone = "Product/Process Spec Change Request ID# "+IDGen + "Site Request"
+ var MessageGPD = "<div style='background-color:red; color:white;text-align:center;width:800px;padding:3px'><h1> Product/Process Spec Change Request - GPD Feedback</h1></div><div style='line-height:30px;background-color:#eeeeee;width:800px;float:left;padding:3px'>"+ emailcontact + " has marked Spec change request ID# "+ID+"   as complete. The resolution for this change request has been logged and a summary is shown below.<br><br><b>Spec Change Requested By: </b>"+Sitecontact+ "<br> <b>Original Change Request: </b>"+ originalProblemProposal +"<br><b> GPD Decision:</b> "+ Approve + "<br><b> Notes/Comments: </b>" + NotesComments + "<br><b> Glid:</b> "+ Glid + "<br><b> Stage:</b> "+ Stage + "<br><b> External Support to review change request?:</b> " + Support  
+ var SubjectGPD = "Product/Process spec Change request: ID# " +ID + "GPD feedback"
+ 
+  
+  if (activeSheet=="Data"){
+    var Message = Messageone
+    var Subject = Subjectone
+    var emailTo = Contactpoint + ",carol.l.callahan@averydennison.com,isabella.smith@averydennison.com" 
+    }
+  
+  if (activeSheet=="Responses"){
+    
+    var Message = MessageGPD
+    var Subject = SubjectGPD 
+    var emailTo = Sitecontact + ",carol.l.callahan@averydennison.com,isabella.smith@averydennison.com" 
+
+    }
+ 
+ 
+ //actually sends the email
+MailApp.sendEmail({to: emailTo,subject: Subject,htmlBody: Message,name:"Product spec change request"})
+ 
+                          
+}
+  
+//Create function to run index 
+function ColIndexs(colName) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+  var numColumns = sheet.getLastColumn();
+  var row = sheet.getRange(1, 1, 1, numColumns).getValues();
+  for (i in row[0]) {
+    var name = row[0][i];
+    if (name == colName) {
+      return parseInt(i) + 1;
+    }
+  }
+  return -1;
+}
+
+
+
+
+ //This function writes the equation for closing or opening a request in the 'Status' column 
+function statusWrites(e) {
+ var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
+ var lastRow = sheet.getLastRow();
+ 
+  
+  //Writes ID values and reference cell values required to determine complaint status, writes the status as open if it is a complaint, writes the status as closed if a resolution is being entered
+   
+  var activeSheet=SpreadsheetApp.getActiveSheet().getName();
+ 
+  if (activeSheet=="Data") {
+  
+  var closed = ',"closed",';
+  var open = '"open")';
+  var IDCell = "C" + lastRow
+  var refCell = "A" + lastRow
+  var status = '=if('+refCell+'>0,"Closed","Open")'
+  var count = "=countif('Responses'!A:A," + IDCell + ")"
+ 
+  
+    // Generates ID Number (adds 1 to previous row ID) 
+  sheet.getRange(lastRow, ColIndexs("ID")).setValue(lastRow + 1);
+  
+  
+  // Set the IDcountRef column to count instances of a particular ID# on the resolution tab. 
+  sheet.getRange(lastRow, ColIndexs("IDcountRef")).setValue(count); 
+  
+
+    sheet.getRange(lastRow, ColIndexs("Status")).setValue(status);
+  }
+  
+                     
+}
+
+
+
+
