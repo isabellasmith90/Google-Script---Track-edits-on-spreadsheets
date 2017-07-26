@@ -1,0 +1,18 @@
+function myFunction() {
+  var sps = SpreadsheetApp.openById("1hFhyNTzIEqLGWkfgwE5QWNgFMHBAqUBP4xuFvTdSp2I");
+  var sheet = sps.getSheets();
+  var data = sheet[0].getDataRange().getValues();
+  
+  for (i in data) {
+      var row = data[i]
+      var precio = row [1];
+      var tasa = row [2];
+      var impuesto = (precio * tasa)/100;
+      var startRow = 1 + +i;
+      
+    sheet[0].getRange(startRow,4).setValue(impuesto);
+    sheet[0].getRange(startRow,5).setValue(precio*impuesto);
+      }
+      
+   SpreadsheetApp.flush();  
+}     
